@@ -1,0 +1,9 @@
+@import url('../Components/Leftsidebar/LeftSidebar.scss');
+@import url('../Components/RightSidebar//RightSidebar.scss');
+@import url('../Components/Pageeditor/Pageeditor.scss');
+@import url('../Components/FloatingIsland/FloatingIsland.scss');
+@import url('../Components/Navbar/Navbar.scss');
+
+.sidebar-and-editor-container {
+  & { display: flex; justify-content: space-between; box-sizing: border-box; }
+}
