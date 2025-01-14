@@ -6,8 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importDefault(require("react"));
 require("./Styles/App.scss");
 function App() {
+<<<<<<< HEAD
     return (react_1.default.createElement("div", { className: "App" },
         react_1.default.createElement("h1", null, "Start Building")));
+=======
+    return (react_1.default.createElement("div", { className: "App" }, "Start Building."));
+>>>>>>> bd1d47fb979c6ffedd3eeb2292231a6db1507edf
 }
 exports.default = App;
 //# sourceMappingURL=App.js.map
