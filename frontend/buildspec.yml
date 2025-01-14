@@ -21,13 +21,13 @@ phases:
     commands:
       - echo "Syncing build artifacts to S3..."
       - if [ -d "$CODEBUILD_SRC_DIR/frontend/build" ]; then
-          aws s3 sync $CODEBUILD_SRC_DIR/frontend/build/ s3://pagebuilder-v1.0.2 --delete;
+          aws s3 sync $CODEBUILD_SRC_DIR/frontend/build/ s3://ask-pdf-s3 --delete;
         else
           echo "Build directory does not exist. Skipping S3 sync.";
           exit 1;
         fi
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id E2NX7TZM8W2ZXJ --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id E2FI9OO2Q8PLN7 --paths "/*"
 
 artifacts:
   files:
