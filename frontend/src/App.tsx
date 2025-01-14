@@ -5,7 +5,8 @@ import './Styles/App.scss'
 function App() {
   return (
     <div className="App">
-      <MasterContainer/>
+      {/* <MasterContainer/> */}
+      <h1>Start Building</h1>
     </div>
   );
 }
