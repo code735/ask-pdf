@@ -21,16 +21,11 @@ phases:
 
   post_build:
     commands:
-      - echo "Syncing build artifacts to S3..."
-      - if [ -d "$CODEBUILD_SRC_DIR/backend/build" ]; then
-          aws s3 sync $CODEBUILD_SRC_DIR/backend/build/ s3://ask-pdf-http-s3 --delete;
-        else
-          echo "Build directory does not exist. Skipping S3 sync.";
-          exit 1;
-        fi
-      - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id E6KL8H3RZT697 --paths "/*"
+      - echo "Zipping build artifacts..."
+      - zip -r app.zip $CODEBUILD_SRC_DIR/backend/*
+      - echo "Uploading ZIP file to S3..."
+      - aws s3 cp app.zip s3://ask-pdf-http-s3/app.zip
 
 artifacts:
   files:
-    - '**/*'
+    - app.zip
