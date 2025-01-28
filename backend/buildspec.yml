@@ -8,7 +8,7 @@ phases:
       - echo "Cleaning up old dependencies..."
       - rm -rf $CODEBUILD_SRC_DIR/backend/node_modules
       - echo "Installing dependencies..."
-      - npm install --prefix $CODEBUILD_SRC_DIR/backend
+      - npm install --prefix $CODEBUILD_SRC_DIR/frontend --legacy-peer-deps
       - echo "Checking for vulnerabilities..."
       - npm audit --prefix $CODEBUILD_SRC_DIR/backend || true
 
