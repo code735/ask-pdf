@@ -3,6 +3,7 @@ import { MimeType, multerRequest } from "./types/types";
 require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
+const pdfParse = require("pdf-parse");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { v4: uuidv4 } = require("uuid");
 
@@ -20,7 +21,10 @@ const s3 = new S3Client({
 const upload = multer({ storage: multer.memoryStorage() });
 
 async function uploadToS3(fileBuffer: Buffer, fileName: string, mimeType: MimeType) {
-  const uniqueName = `${uuidv4()}-${fileName}`;
+
+  const uuid = uuidv4();
+  const encodedUuid = Buffer.from(uuid).toString('base64').slice(0, 5);
+  const uniqueName = `ask-pdf-${encodedUuid}`;
 
   const params = {
     Bucket: "ask-pdf-http-s3", // Hardcoded bucket name
@@ -35,6 +39,10 @@ async function uploadToS3(fileBuffer: Buffer, fileName: string, mimeType: MimeTy
 
   try {
     const result = await s3.send(command);
+
+    const extractText = await pdfParse(fileBuffer)
+
+    console.log("extracted text", extractText)
     console.log("S3 Upload Result:", result); // Log success
     return `https://ask-pdf-http-s3.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueName}`;
   } catch (error) {
