@@ -1,0 +1,13 @@
+.main-container {
+  & { display: flex; }
+  .insert-link-section { 
+    & { padding: 16px; width: 100%; }
+    .input-container { 
+      & { display: flex; position: relative; top: 80%; left: 5%; }
+      .custom-input { width: 70%; height: 50px; padding: 8px; font-size: 16px; border: 1px solid #c7c7c7; border-radius: 4px; position: relative;  }
+      .upload-btn {
+        & { position: absolute; top: 25%; right: 30%; }
+      }
+    }
+  }
+}
