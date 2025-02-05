@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { MimeType, multerRequest } from "./types/types";
+import { PrismaClient } from "@prisma/client";
 require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
@@ -9,6 +10,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 const PORT = 5000;
+const prisma = new PrismaClient()
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -27,24 +29,29 @@ async function uploadToS3(fileBuffer: Buffer, fileName: string, mimeType: MimeTy
   const uniqueName = `ask-pdf-${encodedUuid}`;
 
   const params = {
-    Bucket: "ask-pdf-http-s3", // Hardcoded bucket name
+    Bucket: "ask-pdf-http-s3",
     Key: uniqueName,
     Body: fileBuffer,
     ContentType: mimeType,
   };
 
-  console.log("S3 Upload Params:", params); // Log parameters for debugging
+  console.log("S3 Upload Params:", params);
 
   const command = new PutObjectCommand(params);
 
   try {
     const result = await s3.send(command);
 
-    const extractText = await pdfParse(fileBuffer)
+    const extracted_text = await pdfParse(fileBuffer)
+    const url = `https://ask-pdf-http-s3.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueName}`
 
-    console.log("extracted text", extractText)
-    console.log("S3 Upload Result:", result); // Log success
-    return `https://ask-pdf-http-s3.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueName}`;
+    await prisma.$executeRaw`INSERT INTO pdf_details (file_name, extracted_text, url) 
+    VALUES (${fileName}, ${extracted_text}, ${url})`;
+
+
+    console.log("extracted text", extracted_text)
+    console.log("S3 Upload Result:", result);
+    return url;
   } catch (error) {
     console.error("Error uploading to S3:", error); // Log error details
     throw error;
