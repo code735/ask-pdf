@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { MimeType, multerRequest } from "./types/types";
 import { PrismaClient } from "@prisma/client";
+import { generateEmbeddings } from "./api";
 require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
@@ -48,15 +49,19 @@ async function uploadToS3(fileBuffer: Buffer, fileName: string, mimeType: MimeTy
     await prisma.$executeRaw`INSERT INTO pdf_details (file_name, extracted_text, url) 
     VALUES (${fileName}, ${extracted_text}, ${url})`;
 
+    const embeddings = await generateEmbeddings(extracted_text?.text);
+    console.log("embeddings:", ...embeddings);
 
-    console.log("extracted text", extracted_text)
-    console.log("S3 Upload Result:", result);
+    // console.log("extractedSentences:", ...extractedSentences);
     return url;
   } catch (error) {
     console.error("Error uploading to S3:", error); // Log error details
     throw error;
   }
 }
+
+
+// Routes 
 
 app.post("/upload", upload.single("file"), async (req: multerRequest, res: Response) => {
   try {
@@ -72,6 +77,8 @@ app.post("/upload", upload.single("file"), async (req: multerRequest, res: Respo
     res.status(500).json({ message: "File upload failed.", error: error });
   }
 });
+
+
 
 app.get("/", (req: Request, res: Response) => {
   res.send("server working")
