@@ -52,7 +52,6 @@ async function uploadToS3(fileBuffer: Buffer, fileName: string, mimeType: MimeTy
     const embeddings = await generateEmbeddings(extracted_text?.text);
     console.log("embeddings:", ...embeddings);
 
-    // console.log("extractedSentences:", ...extractedSentences);
     return url;
   } catch (error) {
     console.error("Error uploading to S3:", error); // Log error details
